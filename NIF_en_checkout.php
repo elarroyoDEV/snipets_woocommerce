@@ -12,6 +12,7 @@
 
 add_filter( 'woocommerce_checkout_fields', 'woo_custom_field_checkout' );
 add_action( 'woocommerce_checkout_update_order_meta', 'woo_custom_field_checkout_update_order' );
+add_action( 'woocommerce_checkout_update_user_meta', 'woo_custom_checkout_field_update_user_meta' );
 add_action( 'woocommerce_admin_order_data_after_billing_address', 'woo_custom_field_checkout_edit_order', 10, 1 );
 add_filter( 'woocommerce_email_order_meta_keys', 'woo_custom_field_checkout_email' );
 
@@ -44,6 +45,13 @@ function woo_custom_field_checkout_update_order( $order_id ) {
 	if ( ! empty( filter_input( INPUT_POST, 'billing_nifcif', FILTER_SANITIZE_SPECIAL_CHARS ) ) ) {
 		update_post_meta( $order_id, 'NIF/CIF', sanitize_text_field( filter_input( INPUT_POST, 'billing_nifcif', FILTER_SANITIZE_SPECIAL_CHARS ) ) );
 	}
+}
+
+/**
+ * Update the user meta with field value
+ **/
+function woo_custom_checkout_field_update_user_meta( $user_id ) {
+	if ($user_id && $_POST['billing_nifcif']) update_user_meta( $user_id, 'billing_nifcif', esc_attr($_POST['billing_nifcif']) );
 }
 
 /**
