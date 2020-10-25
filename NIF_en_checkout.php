@@ -15,6 +15,7 @@ add_action( 'woocommerce_checkout_update_order_meta', 'woo_custom_field_checkout
 add_action( 'woocommerce_checkout_update_user_meta', 'woo_custom_checkout_field_update_user_meta' );
 add_action( 'woocommerce_admin_order_data_after_billing_address', 'woo_custom_field_checkout_edit_order', 10, 1 );
 add_filter( 'woocommerce_email_order_meta_keys', 'woo_custom_field_checkout_email' );
+add_filter( 'wpo_wcpdf_billing_address', 'anadir_cif_factura' );
 
 /**
  * Añadir casilla NIF en el checkout
@@ -49,7 +50,10 @@ function woo_custom_field_checkout_update_order( $order_id ) {
 
 /**
  * Update the user meta with field value
- **/
+ * 
+ * @param int $user_id The current user id.
+ * @return void
+ */
 function woo_custom_checkout_field_update_user_meta( $user_id ) {
 	if ($user_id && $_POST['billing_nifcif']) update_user_meta( $user_id, 'billing_nifcif', esc_attr($_POST['billing_nifcif']) );
 }
@@ -60,7 +64,7 @@ function woo_custom_checkout_field_update_user_meta( $user_id ) {
  * @param WC_Order $order el objeto del pedido.
  * @return void
  */
-public function woo_custom_field_checkout_edit_order( $order ) {
+function woo_custom_field_checkout_edit_order( $order ) {
 	$nif_cif = get_post_meta( $order->id, 'NIF/CIF', true );
 	echo '<p><strong>' . esc_html__( 'NIF/CIF', 'cl-enuc-theme-plugin' ) . ':</strong> ' . wp_kses( $nif_cif ) . '</p>';
 }
@@ -71,22 +75,21 @@ public function woo_custom_field_checkout_edit_order( $order ) {
  * @param array $keys el array con los campos.
  * @return $keys
  */
-public function woo_custom_field_checkout_email( $keys ) {
+function woo_custom_field_checkout_email( $keys ) {
 	$keys[] = 'NIF/CIF';
 	return $keys;
 }
 
 
 /**
-*Añadir el CIF automáticamente en el plugin de facturas 'WooCommerce PDF Invoices & Packing Slips'
-*/
- 
-add_filter( 'wpo_wcpdf_billing_address', 'anadir_cif_factura' );
- 
+ * Añadir el CIF automáticamente en el plugin de facturas 'WooCommerce PDF Invoices & Packing Slips'
+ *
+ * @param string $address the text to print.
+ * @return void
+ */ 
 function anadir_cif_factura( $address ){
-  global $wpo_wcpdf;
- 
-  echo $address . '<p>';
-  $wpo_wcpdf->custom_field( 'NIF/CIF', 'NIF/CIF: ' );
-  echo '</p>';
+	global $wpo_wcpdf;
+	echo $address . '<p>';
+	$wpo_wcpdf->custom_field( 'NIF/CIF', 'NIF/CIF: ' );
+	echo '</p>';
 }
