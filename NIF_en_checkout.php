@@ -77,3 +77,16 @@ public function woo_custom_field_checkout_email( $keys ) {
 }
 
 
+/**
+*Añadir el CIF automáticamente en el plugin de facturas 'WooCommerce PDF Invoices & Packing Slips'
+*/
+ 
+add_filter( 'wpo_wcpdf_billing_address', 'anadir_cif_factura' );
+ 
+function anadir_cif_factura( $address ){
+  global $wpo_wcpdf;
+ 
+  echo $address . '<p>';
+  $wpo_wcpdf->custom_field( 'NIF/CIF', 'NIF/CIF: ' );
+  echo '</p>';
+}
