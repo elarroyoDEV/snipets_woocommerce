@@ -4,9 +4,13 @@
  */
 
 if ( ! defined( IRPF_SURCHARGE ) ) {
-  define( 'IRPF_SURCHARGE', -15 );
+	define( 'IRPF_SURCHARGE', -15 );
+}
+
+if ( ! defined( IRPF_ROLE ) ) {
 	define( 'IRPF_ROLE', 'customer_autonomo' );
 }
+
 
 add_action( 'woocommerce_cart_calculate_fees','woo_irpf_surcharge' );
 
